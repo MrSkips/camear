@@ -3,9 +3,12 @@ import cv2
 # Create a VideoCapture object to access the USB camera
 cap = cv2.VideoCapture(0)
 
-# Set the resolution of the video stream
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+# Get the screen resolution
+screen_width, screen_height = 1920, 1080  # Set these values to your screen resolution
+
+# Set the resolution of the video stream to match the screen resolution
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, screen_height)
 
 # Loop over frames from the video stream
 while True:
@@ -15,6 +18,9 @@ while True:
     # If the frame was not read successfully, break out of the loop
     if not ret:
         break
+
+    # Resize the frame to match the screen resolution
+    frame = cv2.resize(frame, (screen_width, screen_height))
 
     # Display the frame in a window named "USB Camera"
     cv2.imshow("USB Camera", frame)
