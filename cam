@@ -1,0 +1,29 @@
+import cv2
+
+# Create a VideoCapture object to access the USB camera
+cap = cv2.VideoCapture(0)
+
+# Set the resolution of the video stream
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+# Loop over frames from the video stream
+while True:
+    # Read a frame from the video stream
+    ret, frame = cap.read()
+
+    # If the frame was not read successfully, break out of the loop
+    if not ret:
+        break
+
+    # Display the frame in a window named "USB Camera"
+    cv2.imshow("USB Camera", frame)
+
+    # Wait for a key press and check if the "q" key was pressed
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord("q"):
+        break
+
+# Release the resources used by the VideoCapture object and close the window
+cap.release()
+cv2.destroyAllWindows()
