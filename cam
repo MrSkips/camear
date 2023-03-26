@@ -37,8 +37,8 @@ current_activity_label.pack(expand=True)
 # Define the function to update the time
 def update_time():
     current_time = datetime.now().strftime('%I:%M:%S %p')
-    time_label.config(text=current_time)
-    current_activity_label.config(text=get_current_activity())
+    time_label.config(fg='white', text=current_time)
+    current_activity_label.config(fg='white', text=get_current_activity())
 
     # Update every second
     root.after(1000, update_time)
