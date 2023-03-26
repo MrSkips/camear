@@ -7,6 +7,7 @@ schedule = {
     '6:30 AM': 'Brush teeth and wash face',
     '6:35 AM': 'Grab backpack and head to bus stop',
     '7:40 AM': 'School',
+    '2:20 PM': 'School ends',
     '3:00 PM': 'Do homework',
     '3:30 PM': 'Relax',
     '6:00 PM': 'Exercise',
@@ -15,42 +16,36 @@ schedule = {
     '9:30 PM': 'Sleep'
 }
 
-# Create the tkinter window
-root = tk.Tk()
+# Initialize the tkinter window
+window = tk.Tk()
+window.configure(background='black')
+window.attributes('-fullscreen', True)
 
-# Set the font and background color
-font = ('Roboto Slab', 48)
-bg_color = 'black'
+# Create the label for displaying the time and activity
+label_time = tk.Label(window, font=('Roboto Slab', 80), fg='white', bg='black')
+label_time.pack(expand=True)
 
-# Create the label to display the time and activity
-time_label = tk.Label(root, text='', font=font, fg='white', bg=bg_color)
-time_label.pack(expand=True)
-
-# Function to update the time and activity
+# Function for updating the time and activity
 def update_time():
     current_time = time.strftime('%I:%M:%S %p')
     current_activity = ''
-    for key, value in schedule.items():
-        if key == current_time[:-3]:
-            current_activity = value
+    for time_str, activity in schedule.items():
+        if time.strftime('%I:%M %p') == time_str:
+            current_activity = activity
             break
-    time_label.config(text=current_time + '\n' + current_activity)
-    root.after(1000, update_time)
+    label_time.config(text=current_time + '\n' + current_activity)
+    window.after(1000, update_time)
 
 # Start the update loop
 update_time()
 
-# Function to stop the program when 'q' is pressed
+# Function for stopping the program if 'q' key is pressed
 def stop_program(event):
     if event.char == 'q':
-        root.quit()
+        window.destroy()
 
-# Bind the 'q' key to the stop_program function
-root.bind('<Key>', stop_program)
+# Bind the 'q' key to stop_program function
+window.bind('<Key>', stop_program)
 
-# Set the window properties
-root.attributes('-fullscreen', True)
-root.configure(background=bg_color)
-
-# Start the main loop
-root.mainloop()
+# Run the tkinter mainloop
+window.mainloop()
