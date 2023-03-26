@@ -1,88 +1,60 @@
+from tkinter import *
 import datetime
-import tkinter as tk
-from tkinter.font import Font
 
-# Define the schedule for each day of the week
+# Set up the schedule dictionary
 schedule = {
-    "Monday": {
-        "wake_up": "6:00am",
-        "events": [
-            "Catch the bus to school",
-            "Attend school from 7:40am-2:20pm",
-            "Catch the bus home",
-            "Wear shop shirt, paired with khaki or black pants and a pair of Air Force 1s"
-        ]
-    },
-    "Tuesday": {
-        "wake_up": "6:00am",
-        "events": [
-            "Catch the bus to school",
-            "Attend school from 7:40am-2:20pm",
-            "Catch the bus home",
-            "Wear shop sweatshirt, paired with khaki or black pants and a pair of Air Force 1s"
-        ]
-    },
-    "Wednesday": {
-        "wake_up": "6:00am",
-        "events": [
-            "Catch the bus to school",
-            "Attend school from 7:40am-2:20pm",
-            "Catch the bus home",
-            "Take a shower at 9:30pm",
-            "Wear shop long sleeve, paired with khaki or black pants and a pair of Air Force 1s"
-        ]
-    },
-    "Thursday": {
-        "wake_up": "6:00am",
-        "events": [
-            "Catch the bus to school",
-            "Attend school from 7:40am-2:20pm",
-            "Catch the bus home",
-            "Wear shop shirt, paired with khaki or black pants and a pair of Air Force 1s"
-        ]
-    },
-    "Friday": {
-        "wake_up": "6:00am",
-        "events": [
-            "Catch the bus to school",
-            "Attend school from 7:40am-2:20pm",
-            "Catch the bus home",
-            "Take a shower at 9:30pm",
-            "Wear shop sweatshirt, paired with khaki or black pants and a pair of Air Force 1s"
-        ]
-    },
-    "Saturday": {
-        "events": [
-            "Wear gray shirt, black pants, and white sneakers. Layer a black or gray jacket over the shirt for a cool look"
-        ]
-    },
-    "Sunday": {
-        "events": [
-            "Wear navy blue shirt, gray pants, and brown boots. Accessorize with a brown leather belt and a watch for a polished touch"
-        ]
-    }
+    '6:00 AM - 6:30 AM': 'Wake up and get dressed',
+    '6:30 AM - 6:35 AM': 'Brush teeth and wash face',
+    '6:35 AM - 6:38 AM': 'Grab backpack and head to bus stop',
+    '7:40 AM - 2:20 PM': 'School',
+    '3:00 PM - 3:30 PM': 'Do homework',
+    '3:30 PM - 6:00 PM': 'Relax',
+    '6:00 PM - 6:30 PM': 'Exercise',
+    '6:30 PM - 9:00 PM': 'Dinner and free time',
+    '9:00 PM - 9:30 PM': 'Shower and get ready for bed',
+    '9:30 PM - 6:00 AM': 'Sleep'
 }
 
-# Create a Tkinter window
-window = tk.Tk()
+# Set up the Tkinter window
+root = Tk()
+root.title("Daily Schedule")
+root.attributes('-fullscreen', True)
+root.configure(background='black')
 
-# Set the window title and size
-window.title("Daily Schedule")
-window.attributes('-fullscreen', True)
+# Set up the text in the middle of the screen for displaying the current time
+current_time_text = StringVar()
+current_time_label = Label(root, textvariable=current_time_text, font=('Roboto Slab', 40), fg='white', bg='black')
+current_time_label.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-# Set the font for the schedule
-font = Font(family="Roboto Slab", size=20)
+# Set up the function to update the current time text
+def update_time():
+    current_time = datetime.datetime.now().strftime('%I:%M %p')
+    current_time_text.set(current_time)
+    current_schedule = ""
+    for key in schedule:
+        time_range = key.split(" - ")
+        start_time = datetime.datetime.strptime(time_range[0], '%I:%M %p')
+        end_time = datetime.datetime.strptime(time_range[1], '%I:%M %p')
+        if start_time <= datetime.datetime.now() <= end_time:
+            current_schedule = schedule[key]
+            break
+    schedule_label.config(text=current_schedule)
+    root.after(1000, update_time)
 
-# Get the current day of the week
-day_of_week = datetime.datetime.today().strftime('%A')
+# Set up the label for displaying the current schedule
+schedule_label = Label(root, font=('Roboto Slab', 20), fg='white', bg='black')
+schedule_label.place(relx=0.5, rely=0.8, anchor=CENTER)
 
-# Display the schedule for the current day in the window
-schedule_label = tk.Label(window, text=f"Schedule for {day_of_week}:", font=font)
-schedule_label.pack(side="top", pady=50)
-if day_of_week in schedule:
-    day_schedule = schedule[day_of_week]
-    if "wake_up" in day_schedule:
-        wake_up_label = tk.Label(window, text=f" - Wake up at {day_schedule['wake_up']}", font=font)
-        wake_up_label.pack()
-    for event in day_schedule["events"]:
-        event
+# Call the update_time function to start updating the current time and schedule labels
+update_time()
+
+# Set up the function to stop the program when the user presses the Q key
+def stop_program(event):
+    if event.keysym == 'q':
+        root.destroy()
+
+# Bind the Q key to the stop_program function
+root.bind('<Key>', stop_program)
+
+# Start the main loop of the Tkinter window
+root.mainloop()
