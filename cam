@@ -1,66 +1,56 @@
 import tkinter as tk
 import time
 
-# Schedule dictionary
+# Define the schedule
 schedule = {
-    '6:00 AM - 6:30 AM': 'Wake up and get dressed',
-    '6:30 AM - 6:35 AM': 'Brush teeth and wash face',
-    '6:35 AM - 6:38 AM': 'Grab backpack and head to bus stop',
-    '7:40 AM - 2:20 PM': 'School',
-    '3:00 PM - 3:30 PM': 'Do homework',
-    '3:30 PM - 6:00 PM': 'Relax',
-    '6:00 PM - 6:30 PM': 'Exercise',
-    '6:30 PM - 9:00 PM': 'Dinner and free time',
-    '9:00 PM - 9:30 PM': 'Shower and get ready for bed',
-    '9:30 PM - 6:00 AM': 'Sleep'
+    '6:00 AM': 'Wake up and get dressed',
+    '6:30 AM': 'Brush teeth and wash face',
+    '6:35 AM': 'Grab backpack and head to bus stop',
+    '7:40 AM': 'School',
+    '3:00 PM': 'Do homework',
+    '3:30 PM': 'Relax',
+    '6:00 PM': 'Exercise',
+    '6:30 PM': 'Dinner and free time',
+    '9:00 PM': 'Shower and get ready for bed',
+    '9:30 PM': 'Sleep'
 }
 
-# Create root window
+# Create the tkinter window
 root = tk.Tk()
-root.configure(bg='black')
-root.attributes('-fullscreen', True)
 
-# Create time label
-time_label = tk.Label(root, font=('Roboto Slab', 100), fg='white', bg='black')
+# Set the font and background color
+font = ('Roboto Slab', 48)
+bg_color = 'black'
+
+# Create the label to display the time and activity
+time_label = tk.Label(root, text='', font=font, fg='white', bg=bg_color)
 time_label.pack(expand=True)
 
-# Create activity label
-activity_label = tk.Label(root, font=('Roboto Slab', 50), fg='white', bg='black')
-activity_label.pack(expand=True)
-
-# Update clock function
-def update_clock():
-    current_time = time.strftime('%H:%M:%S')
-    current_activity = None
-
-    # Get current activity
-    for key in schedule:
-        start_time = key.split(' - ')[0]
-        end_time = key.split(' - ')[1]
-        if start_time <= current_time <= end_time:
-            current_activity = schedule[key]
+# Function to update the time and activity
+def update_time():
+    current_time = time.strftime('%I:%M:%S %p')
+    current_activity = ''
+    for key, value in schedule.items():
+        if key == current_time[:-3]:
+            current_activity = value
             break
+    time_label.config(text=current_time + '\n' + current_activity)
+    root.after(1000, update_time)
 
-    # Update time label
-    time_label.configure(text=current_time)
+# Start the update loop
+update_time()
 
-    # Update activity label
-    if current_activity:
-        activity_label.configure(text=current_activity)
-    else:
-        activity_label.configure(text='')
-
-    # Call update_clock() after 1 second
-    root.after(1000, update_clock)
-
-# Call update_clock() initially to start the loop
-update_clock()
-
-# Exit program on 'q' key press
-def exit_program(event):
+# Function to stop the program when 'q' is pressed
+def stop_program(event):
     if event.char == 'q':
-        root.destroy()
+        root.quit()
 
-root.bind('<Key>', exit_program)
+# Bind the 'q' key to the stop_program function
+root.bind('<Key>', stop_program)
 
+# Set the window properties
+root.attributes('-fullscreen', True)
+root.configure(background=bg_color)
+
+# Start the main loop
 root.mainloop()
