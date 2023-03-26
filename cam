@@ -1,66 +1,61 @@
 import tkinter as tk
-import time
+from datetime import datetime
+from typing import Dict
 
-# Schedule dictionary
-schedule = {
+# Define the schedule dictionary
+schedule: Dict[str, str] = {
     '6:00 AM': 'Wake up and get dressed',
     '6:30 AM': 'Brush teeth and wash face',
     '6:35 AM': 'Grab backpack and head to bus stop',
     '7:40 AM': 'School',
+    '2:20 PM': 'School ends',
     '3:00 PM': 'Do homework',
     '3:30 PM': 'Relax',
     '6:00 PM': 'Exercise',
     '6:30 PM': 'Dinner and free time',
     '9:00 PM': 'Shower and get ready for bed',
-    '9:30 PM': 'Sleep'
+    '9:30 PM': 'Sleep',
 }
 
-# Get current time
-current_time = time.strftime("%I:%M:%S %p")
-
-# Get current activity
-current_activity = ""
-for key in schedule:
-    if key <= time.strftime("%I:%M %p"):
-        current_activity = schedule[key]
-    else:
-        break
-
-# Initialize tkinter
+# Set up the tkinter window
 root = tk.Tk()
-root.title("Daily Schedule")
-root.geometry("800x480")
-root.configure(background='black')
+root.configure(bg='black')
+root.attributes('-fullscreen', True)
 
-# Create time label
-time_label = tk.Label(root, text=current_time, font=('Roboto Slab', 70), fg='white', bg='black')
+# Set up the font
+font_style = ('Roboto Slab', 50)
+current_activity_font = ('Roboto Slab', 30)
+
+# Create the time label
+time_label = tk.Label(root, font=font_style, fg='white', bg='black')
 time_label.pack(expand=True)
 
-# Create current activity label
-activity_label = tk.Label(root, text=current_activity, font=('Roboto Slab', 30), fg='white', bg='black')
-activity_label.pack(expand=True)
+# Create the current activity label
+current_activity_label = tk.Label(root, font=current_activity_font, fg='white', bg='black')
+current_activity_label.pack(expand=True)
 
-# Update time and current activity
-def update():
-    current_time = time.strftime("%I:%M:%S %p")
-    time_label.configure(text=current_time)
-    for key in schedule:
-        if key <= time.strftime("%I:%M %p"):
-            current_activity = schedule[key]
-        else:
-            break
-    activity_label.configure(text=current_activity)
-    root.after(1000, update)
+# Define the function to update the time
+def update_time():
+    current_time = datetime.now().strftime('%I:%M:%S %p')
+    time_label.config(text=current_time)
+    current_activity_label.config(text=get_current_activity())
 
-# Start updating
-update()
+    # Update every second
+    root.after(1000, update_time)
 
-# Stop updating and exit on pressing Q key
-def stop(event):
-    if event.char == "q" or event.char == "Q":
-        root.destroy()
+# Define the function to get the current activity
+def get_current_activity() -> str:
+    current_time = datetime.now().strftime('%-I:%M %p')
+    if current_time in schedule:
+        return schedule[current_time]
+    else:
+        return ''
 
-root.bind("<Key>", stop)
+# Bind the 'q' key to quit the program
+root.bind('q', lambda e: root.quit())
 
-# Start the application
+# Call the update_time function to start updating the time
+update_time()
+
+# Start the tkinter main loop
 root.mainloop()
