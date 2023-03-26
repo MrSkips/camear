@@ -1,75 +1,88 @@
-import cv2
-import face_recognition
-import os
+import datetime
+import tkinter as tk
+from tkinter.font import Font
 
-# Load the known faces and their names from the dataset
-dataset_path = "dataset"  # Path to the directory containing the dataset
-known_face_encodings = []
-known_face_names = []
-for file_name in os.listdir(dataset_path):
-    if file_name.endswith(".jpg") or file_name.endswith(".png"):
-        image_path = os.path.join(dataset_path, file_name)
-        name = os.path.splitext(file_name)[0]
-        image = face_recognition.load_image_file(image_path)
-        encoding = face_recognition.face_encodings(image)[0]
-        known_face_encodings.append(encoding)
-        known_face_names.append(name)
+# Define the schedule for each day of the week
+schedule = {
+    "Monday": {
+        "wake_up": "6:00am",
+        "events": [
+            "Catch the bus to school",
+            "Attend school from 7:40am-2:20pm",
+            "Catch the bus home",
+            "Wear shop shirt, paired with khaki or black pants and a pair of Air Force 1s"
+        ]
+    },
+    "Tuesday": {
+        "wake_up": "6:00am",
+        "events": [
+            "Catch the bus to school",
+            "Attend school from 7:40am-2:20pm",
+            "Catch the bus home",
+            "Wear shop sweatshirt, paired with khaki or black pants and a pair of Air Force 1s"
+        ]
+    },
+    "Wednesday": {
+        "wake_up": "6:00am",
+        "events": [
+            "Catch the bus to school",
+            "Attend school from 7:40am-2:20pm",
+            "Catch the bus home",
+            "Take a shower at 9:30pm",
+            "Wear shop long sleeve, paired with khaki or black pants and a pair of Air Force 1s"
+        ]
+    },
+    "Thursday": {
+        "wake_up": "6:00am",
+        "events": [
+            "Catch the bus to school",
+            "Attend school from 7:40am-2:20pm",
+            "Catch the bus home",
+            "Wear shop shirt, paired with khaki or black pants and a pair of Air Force 1s"
+        ]
+    },
+    "Friday": {
+        "wake_up": "6:00am",
+        "events": [
+            "Catch the bus to school",
+            "Attend school from 7:40am-2:20pm",
+            "Catch the bus home",
+            "Take a shower at 9:30pm",
+            "Wear shop sweatshirt, paired with khaki or black pants and a pair of Air Force 1s"
+        ]
+    },
+    "Saturday": {
+        "events": [
+            "Wear gray shirt, black pants, and white sneakers. Layer a black or gray jacket over the shirt for a cool look"
+        ]
+    },
+    "Sunday": {
+        "events": [
+            "Wear navy blue shirt, gray pants, and brown boots. Accessorize with a brown leather belt and a watch for a polished touch"
+        ]
+    }
+}
 
-# Initialize the face detector and the VideoCapture object
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-cap = cv2.VideoCapture(0)
+# Create a Tkinter window
+window = tk.Tk()
 
-# Loop over frames from the video stream
-while True:
-    # Read a frame from the video stream
-    ret, frame = cap.read()
+# Set the window title and size
+window.title("Daily Schedule")
+window.attributes('-fullscreen', True)
 
-    # If the frame was not read successfully, break out of the loop
-    if not ret:
-        break
+# Set the font for the schedule
+font = Font(family="Roboto Slab", size=20)
 
-    # Convert the frame to grayscale for faster processing
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+# Get the current day of the week
+day_of_week = datetime.datetime.today().strftime('%A')
 
-    # Detect faces in the frame using the face detector
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-
-    # Loop over the detected faces
-    for (x, y, w, h) in faces:
-        # Extract the face region from the grayscale image
-        face_image = gray[y:y + h, x:x + w]
-
-        # Resize the face image to match the size of the images in the dataset
-        face_image = cv2.resize(face_image, (128, 128))
-
-        # Encode the face image using the face_recognition module
-        encoding = face_recognition.face_encodings(face_image)[0]
-
-        # Recognize the face by comparing its encoding to the known face encodings
-        matches = face_recognition.compare_faces(known_face_encodings, encoding)
-
-        # If a match is found, get the name of the recognized person
-        name = "Unknown"
-        if True in matches:
-            match_index = matches.index(True)
-            name = known_face_names[match_index]
-
-        # Draw a rectangle around the detected face and display the name of the recognized person
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        cv2.putText(frame, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
-
-        # Save the image of the unrecognized person to a file named "unrecognized.jpg"
-        if name == "Unknown":
-            cv2.imwrite("unrecognized.jpg", frame)
-
-    # Display the frame in a window named "USB Camera"
-    cv2.imshow("USB Camera", frame)
-
-    # Wait for a key press and check if the "q" key was pressed
-    key = cv2.waitKey(1) & 0xFF
-    if key == ord("q"):
-        break
-
-# Release the resources used by the VideoCapture object and close the window
-cap.release()
-cv2.destroyAllWindows()
+# Display the schedule for the current day in the window
+schedule_label = tk.Label(window, text=f"Schedule for {day_of_week}:", font=font)
+schedule_label.pack(side="top", pady=50)
+if day_of_week in schedule:
+    day_schedule = schedule[day_of_week]
+    if "wake_up" in day_schedule:
+        wake_up_label = tk.Label(window, text=f" - Wake up at {day_schedule['wake_up']}", font=font)
+        wake_up_label.pack()
+    for event in day_schedule["events"]:
+        event
